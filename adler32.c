@@ -2,27 +2,70 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BUFLEN 4096
 
+struct options {
+    unsigned char valid:1;
+    unsigned char quiet:1;
+};
+
+struct options parse_options(int argc, char** argv) {
+    char* arg;
+    size_t len;
+    struct options options = {1, 0, 0};
+
+    for (int i = 1; i < argc; i++) {
+        arg = argv[i];
+
+        if (arg[0] != '-') {
+            break; // First file argument found
+        }
+
+        len = strlen(arg);
+        for (size_t j = 1; j < len; j++) {
+            if (arg[j] == 'q') {
+                options.quiet = 1;
+            } else {
+                options.valid = 0;
+                printf("%s: illegal option -- %c\n", argv[0], arg[j]);
+            }
+        }
+    }
+
+    if (!options.valid) {
+        printf("usage: %s [-q] [files ...]", argv[0]);
+    }
+
+    return options;
+}
+
 int main(int argc, char** argv) {
     int ret = EXIT_SUCCESS; // Return value
-    char* path; // Current file (path)
+    char* arg; // Current argument
+    FILE* f;
     size_t bytes_read;
     int i;
     size_t j;
+    uint8_t buf[BUFLEN];
     uint32_t s1;
     uint32_t s2;
     char skip = 0; // Skip output for file
-    uint8_t buf[BUFLEN];
+
+    struct options options = parse_options(argc, argv);
+    if (!options.valid) {
+        return EXIT_FAILURE;
+    }
 
     for (i = 1; i < argc; i++) {
-        path = argv[i];
-        FILE* f = fopen(path, "rb");
-        if (f == NULL) {
-            printf("Error while opening %s\n", path);
-            continue;
-        }
+        arg = argv[i];
+
+        f = fopen(arg, "rb");
+            if (f == NULL) {
+                printf("Error while opening %s\n", arg);
+                continue;
+            }
 
         s1 = 1;
         s2 = 0;
@@ -33,7 +76,7 @@ int main(int argc, char** argv) {
             {
                 ret = EXIT_FAILURE;
                 skip = 1;
-                printf("Error while reading %s\n", path);
+                printf("Error while reading %s\n", arg);
                 break;
             }
 
@@ -55,9 +98,12 @@ int main(int argc, char** argv) {
             continue;
         }
 
-        printf("%08x  %s\n", (s2 << 16) | s1, path);
+        if (options.quiet) {
+            printf("%08x\n", (s2 << 16) | s1);
+        } else {
+            printf("%08x  %s\n", (s2 << 16) | s1, arg);
+        }
     }
 
     return ret;
 }
-
