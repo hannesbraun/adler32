@@ -1,7 +1,9 @@
 /*******************************************************************************
- * adler32.c: adler32 version 1.0.0
+ * adler32.c: adler32 version 1.0.1
  * Copyright 2021 Hannes Braun (hannesbraun@mail.de)
  *
+ * Version 1.0.1: Add newline character to the usage string
+ *                                                    by Hannes Braun 2021/05/09
  * Version 1.0.0: Basic Adler-32 implementation for one or more files
  *                                                    by Hannes Braun 2021/05/09
  ******************************************************************************/
@@ -47,7 +49,7 @@ struct options parse_options(int argc, char** argv) {
     }
 
     if (!options.valid) {
-        printf("usage: %s [-q] [files ...]", argv[0]);
+        printf("usage: %s [-q] [files ...]\n", argv[0]);
     }
 
     return options;
