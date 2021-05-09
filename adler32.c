@@ -72,10 +72,10 @@ int main(int argc, char** argv) {
         }
 
         f = fopen(arg, "rb");
-            if (f == NULL) {
-                printf("Error while opening %s\n", arg);
-                continue;
-            }
+        if (f == NULL) {
+            printf("Error while opening %s\n", arg);
+            continue;
+        }
 
         s1 = 1;
         s2 = 0;
