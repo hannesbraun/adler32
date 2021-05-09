@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * adler32.c: adler32 version 1.0.0
+ * Copyright 2021 Hannes Braun (hannesbraun@mail.de)
+ *
+ * Version 1.0.0: Basic Adler-32 implementation for one or more files
+ *                                                    by Hannes Braun 2021/05/09
+ ******************************************************************************/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
