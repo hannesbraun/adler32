@@ -14,9 +14,13 @@ struct options {
 struct options parse_options(int argc, char** argv) {
     char* arg;
     size_t len;
-    struct options options = {1, 0, 0};
+    struct options options = {1, 0};
 
-    for (int i = 1; i < argc; i++) {
+    // Loop variables
+    int i;
+    size_t j;
+
+    for (i = 1; i < argc; i++) {
         arg = argv[i];
 
         if (arg[0] != '-') {
@@ -24,7 +28,7 @@ struct options parse_options(int argc, char** argv) {
         }
 
         len = strlen(arg);
-        for (size_t j = 1; j < len; j++) {
+        for (j = 1; j < len; j++) {
             if (arg[j] == 'q') {
                 options.quiet = 1;
             } else {
@@ -52,6 +56,7 @@ int main(int argc, char** argv) {
     uint32_t s1;
     uint32_t s2;
     char skip = 0; // Skip output for file
+    char reading_args = 1;
 
     struct options options = parse_options(argc, argv);
     if (!options.valid) {
@@ -60,6 +65,11 @@ int main(int argc, char** argv) {
 
     for (i = 1; i < argc; i++) {
         arg = argv[i];
+        if (reading_args && arg[0] == '-') {
+            continue;
+        } else {
+            reading_args = 0;
+        }
 
         f = fopen(arg, "rb");
             if (f == NULL) {
